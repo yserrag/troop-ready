@@ -64,7 +64,7 @@ export function PhoneInput({ onSubmit, disabled }: PhoneInputProps) {
         disabled={disabled || !isValid}
         className="w-full rounded-md bg-[#1a2744] text-white py-2.5 px-4 text-sm font-medium hover:bg-[#2a3754] focus:outline-none focus:ring-2 focus:ring-[#1a2744] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Continue with WhatsApp
+        Continue with SMS
       </button>
     </form>
   );

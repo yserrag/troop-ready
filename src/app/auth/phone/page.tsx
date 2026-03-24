@@ -32,7 +32,7 @@ function PhoneAuthContent() {
       const supabase = createSupabaseBrowserClient();
       const { error: otpError } = await supabase.auth.signInWithOtp({
         phone: fullPhone,
-        options: { channel: "whatsapp" },
+        options: { channel: "sms" },
       });
       if (otpError) {
         if (otpError.message.includes("rate")) {
@@ -80,7 +80,7 @@ function PhoneAuthContent() {
       const supabase = createSupabaseBrowserClient();
       const { error: resendError } = await supabase.auth.signInWithOtp({
         phone,
-        options: { channel: "whatsapp" },
+        options: { channel: "sms" },
       });
       if (resendError) {
         setError(resendError.message);
@@ -100,7 +100,7 @@ function PhoneAuthContent() {
       </h1>
       <p className="text-gray-600 text-sm mb-6">
         {step === "phone"
-          ? "We\u2019ll send a verification code to your WhatsApp."
+          ? "We\u2019ll text you a verification code."
           : `Enter the 6-digit code sent to ${phone}.`}
       </p>
 
