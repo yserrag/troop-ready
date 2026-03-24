@@ -13,7 +13,7 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
+          cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({ request });
@@ -29,12 +29,34 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  const pathname = request.nextUrl.pathname;
+
   // Protect /dashboard/* routes — redirect to /auth/verify if no session
-  if (!user && request.nextUrl.pathname.startsWith("/dashboard")) {
+  if (!user && pathname.startsWith("/dashboard")) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth/verify";
+    url.searchParams.set("redirect", pathname);
     return NextResponse.redirect(url);
   }
+
+  // Protect /api/leader-invite (POST only) — return 401 if no session
+  if (
+    !user &&
+    pathname.startsWith("/api/leader-invite") &&
+    request.method === "POST"
+  ) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Protect /api/sync (POST only) — return 401 if no session
+  if (!user && pathname === "/api/sync" && request.method === "POST") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  // Allow all /e/* routes through (public event access)
+  // Allow all /auth/* routes through
+  // Allow /api/events/* GET through (public event API)
+  // All other routes pass through with session refresh
 
   return supabaseResponse;
 }
